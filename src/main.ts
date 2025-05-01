@@ -18,6 +18,7 @@ async function bootstrap() {
     .setDescription('API para sistema bancário')
     .setVersion('1.0')
     .addBearerAuth()
+    .addBasicAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

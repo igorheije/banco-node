@@ -1,4 +1,11 @@
-import { Controller, Post, Body, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Req,
+  UseGuards,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
 import { Request } from 'express';
 import {
@@ -22,7 +29,10 @@ interface RequestWithUser extends Request {
 @UseGuards(AuthGuard)
 @Controller('transactions')
 export class TransactionsController {
-  constructor(private readonly transactionsService: TransactionsService) {}
+  constructor(
+    private readonly transactionsService: TransactionsService,
+    private readonly authGuard: AuthGuard,
+  ) {}
 
   @Post('deposit')
   @ApiOperation({ summary: 'Realizar depósito' })
@@ -38,7 +48,10 @@ export class TransactionsController {
     },
   })
   async deposit(@Req() req: RequestWithUser, @Body('amount') amount: number) {
-    const userId = req.user.sub;
+    const userId = await this.authGuard.decodeToken(req.headers.authorization);
+    if (!userId) {
+      throw new UnauthorizedException('Não autorizado');
+    }
     return this.transactionsService.deposit(userId, amount);
   }
 
@@ -67,7 +80,10 @@ export class TransactionsController {
     @Body('toAccountId') toAccountId: string,
     @Body('amount') amount: number,
   ) {
-    const userId = req.user.sub;
+    const userId = await this.authGuard.decodeToken(req.headers.authorization);
+    if (!userId) {
+      throw new UnauthorizedException('Não autorizado');
+    }
 
     return this.transactionsService.transfer(userId, toAccountId, amount);
   }
@@ -88,7 +104,14 @@ export class TransactionsController {
       },
     },
   })
-  async reverseTransaction(@Body('transactionId') transactionId: string) {
+  async reverseTransaction(
+    @Req() req: RequestWithUser,
+    @Body('transactionId') transactionId: string,
+  ) {
+    const userId = await this.authGuard.decodeToken(req.headers.authorization);
+    if (!userId) {
+      throw new UnauthorizedException('Não autorizado');
+    }
     return this.transactionsService.reverseTransaction(transactionId);
   }
 }

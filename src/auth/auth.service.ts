@@ -1,14 +1,17 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
 import * as bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
-
+import { AuthGuard } from './auth.guard';
 @Injectable()
 export class AuthService {
   constructor(
     private database: DatabaseService,
-    private jwtService: JwtService,
+    private authGuard: AuthGuard,
   ) {}
 
   async validateUser(email: string, password: string): Promise<any> {
@@ -25,12 +28,22 @@ export class AuthService {
 
   async login(user: any) {
     const payload = { email: user.email, sub: user.id };
+    const token = await this.authGuard.encodeToken(payload);
     return {
-      access_token: this.jwtService.sign(payload),
+      access_token: token,
     };
   }
 
   async register(name: string, email: string, password: string) {
+    const [existingUser] = await this.database.query(
+      'SELECT * FROM users WHERE email = $1',
+      [email],
+    );
+
+    if (existingUser) {
+      throw new BadRequestException('Usuário já existe');
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     return this.database.transaction(async (client) => {
