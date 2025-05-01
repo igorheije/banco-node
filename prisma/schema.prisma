@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String   @id @default(uuid())
+  name       String
+  email      String   @unique
+  password   String
+  created_at DateTime @default(now())
+
+  account Account?
+
+  @@map("users")
+}
+
+model Account {
+  id         String   @id @default(uuid())
+  user_id    String   @unique
+  balance    Decimal  @default(0.00)
+  created_at DateTime @default(now())
+
+  user                  User          @relation(fields: [user_id], references: [id])
+  transactions_sent     Transaction[] @relation("Sender")
+  transactions_received Transaction[] @relation("Receiver")
+
+  @@map("accounts")
+}
+
+model Transaction {
+  id                      String            @id @default(uuid())
+  from_account_id         String?
+  to_account_id           String?
+  amount                  Decimal
+  type                    TransactionType
+  status                  TransactionStatus
+  reversed_transaction_id String?
+  created_at              DateTime          @default(now())
+
+  from_account         Account?      @relation("Sender", fields: [from_account_id], references: [id])
+  to_account           Account?      @relation("Receiver", fields: [to_account_id], references: [id])
+  reversed_transaction Transaction?  @relation("Reversal", fields: [reversed_transaction_id], references: [id])
+  reversal_of          Transaction[] @relation("Reversal")
+
+  @@map("transactions")
+}
+
+enum TransactionType {
+  transfer
+  refund
+  deposit
+  withdrawal
+}
+
+enum TransactionStatus {
+  pending
+  completed
+  reversed
+  failed
+}
