@@ -15,7 +15,7 @@ Este é um projeto de API REST desenvolvido com NestJS, utilizando PostgreSQL co
 1. Clone o repositório:
 
 ```bash
-git clone [URL_DO_REPOSITÓRIO]
+git clone [https://github.com/igorheije/banco-node]
 cd banco-node
 ```
 
