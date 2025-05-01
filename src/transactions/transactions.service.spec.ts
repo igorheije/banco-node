@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TransactionsService } from './transactions.service';
 import { DatabaseService } from '../database/database.service';
 import { BadRequestException } from '@nestjs/common';
+import { AuthGuard } from '../auth/auth.guard';
 
 jest.mock('uuid', () => ({
   v4: () => 'mocked-uuid',
@@ -21,6 +22,12 @@ describe('TransactionsService', () => {
             query: jest.fn(),
             transaction: jest.fn(),
             execute: jest.fn(),
+          },
+        },
+        {
+          provide: AuthGuard,
+          useValue: {
+            encodeToken: jest.fn().mockReturnValue('mocked-jwt-token'),
           },
         },
       ],

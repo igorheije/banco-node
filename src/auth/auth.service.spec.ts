@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
-import { JwtService } from '@nestjs/jwt';
 import { DatabaseService } from '../database/database.service';
 import * as bcrypt from 'bcrypt';
 import { UnauthorizedException } from '@nestjs/common';
+import { AuthGuard } from './auth.guard';
 
 jest.mock('bcrypt');
 jest.mock('uuid', () => ({
@@ -13,7 +13,7 @@ jest.mock('uuid', () => ({
 describe('AuthService', () => {
   let service: AuthService;
   let databaseService: DatabaseService;
-  let jwtService: JwtService;
+  let authGuard: AuthGuard;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -27,9 +27,9 @@ describe('AuthService', () => {
           },
         },
         {
-          provide: JwtService,
+          provide: AuthGuard,
           useValue: {
-            sign: jest.fn().mockReturnValue('mocked-jwt-token'),
+            encodeToken: jest.fn().mockReturnValue('mocked-jwt-token'),
           },
         },
       ],
@@ -37,7 +37,7 @@ describe('AuthService', () => {
 
     service = module.get<AuthService>(AuthService);
     databaseService = module.get<DatabaseService>(DatabaseService);
-    jwtService = module.get<JwtService>(JwtService);
+    authGuard = module.get<AuthGuard>(AuthGuard);
   });
 
   describe('validateUser', () => {
@@ -90,7 +90,7 @@ describe('AuthService', () => {
       expect(result).toEqual({
         access_token: 'mocked-jwt-token',
       });
-      expect(jwtService.sign).toHaveBeenCalledWith({
+      expect(authGuard.encodeToken).toHaveBeenCalledWith({
         email: mockUser.email,
         sub: mockUser.id,
       });
@@ -106,6 +106,7 @@ describe('AuthService', () => {
         created_at: new Date(),
       };
 
+      (databaseService.query as jest.Mock).mockResolvedValue([]);
       (databaseService.transaction as jest.Mock).mockImplementation(
         async (callback) => {
           const mockClient = {

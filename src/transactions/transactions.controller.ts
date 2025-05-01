@@ -93,21 +93,7 @@ export class TransactionsController {
   @ApiResponse({ status: 200, description: 'Transação revertida com sucesso' })
   @ApiResponse({ status: 400, description: 'Transação inválida' })
   @ApiResponse({ status: 401, description: 'Não autorizado' })
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        transactionId: {
-          type: 'string',
-          example: '123e4567-e89b-12d3-a456-426614174000',
-        },
-      },
-    },
-  })
-  async reverseTransaction(
-    @Req() req: RequestWithUser,
-    @Body('transactionId') transactionId: string,
-  ) {
+  async reverseTransaction(@Req() req: RequestWithUser, transactionId: string) {
     const userId = await this.authGuard.decodeToken(req.headers.authorization);
     if (!userId) {
       throw new UnauthorizedException('Não autorizado');

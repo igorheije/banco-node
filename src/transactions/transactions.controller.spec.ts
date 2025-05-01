@@ -3,11 +3,16 @@ import { TransactionsController } from './transactions.controller';
 import { TransactionsService } from './transactions.service';
 import { Request } from 'express';
 import { JwtModule } from '@nestjs/jwt';
+import { AuthGuard } from '../auth/auth.guard';
+import { UnauthorizedException } from '@nestjs/common';
 
 interface RequestWithUser extends Request {
   user: {
     sub: string;
     email: string;
+  };
+  headers: {
+    authorization: string;
   };
 }
 
@@ -26,6 +31,9 @@ describe('TransactionsController', () => {
       sub: 'user123',
       email: 'user@example.com',
     },
+    headers: {
+      authorization: 'Bearer mock-token',
+    },
   } as unknown as RequestWithUser;
 
   beforeEach(async () => {
@@ -36,6 +44,17 @@ describe('TransactionsController', () => {
         {
           provide: TransactionsService,
           useValue: mockTransactionsService,
+        },
+        {
+          provide: AuthGuard,
+          useValue: {
+            decodeToken: jest.fn().mockImplementation((token) => {
+              if (token === 'Bearer mock-token') {
+                return Promise.resolve('user123');
+              }
+              return Promise.resolve(null);
+            }),
+          },
         },
       ],
     }).compile();
@@ -57,11 +76,21 @@ describe('TransactionsController', () => {
 
       const result = await controller.deposit(mockRequest, amount);
 
-      expect(service.deposit).toHaveBeenCalledWith(
-        mockRequest.user.sub,
-        amount,
-      );
+      expect(service.deposit).toHaveBeenCalledWith('user123', amount);
       expect(result).toEqual(expectedResult);
+    });
+
+    it('should throw UnauthorizedException when token is invalid', async () => {
+      await expect(
+        controller.deposit(
+          {
+            headers: {
+              authorization: 'Bearer invalid-token',
+            },
+          } as any,
+          100.5,
+        ),
+      ).rejects.toThrow(UnauthorizedException);
     });
   });
 
@@ -80,11 +109,25 @@ describe('TransactionsController', () => {
       );
 
       expect(service.transfer).toHaveBeenCalledWith(
-        mockRequest.user.sub,
+        'user123',
         toAccountId,
         amount,
       );
       expect(result).toEqual(expectedResult);
+    });
+
+    it('should throw UnauthorizedException when token is invalid', async () => {
+      await expect(
+        controller.transfer(
+          {
+            headers: {
+              authorization: 'Bearer invalid-token',
+            },
+          } as any,
+          'account123',
+          50.75,
+        ),
+      ).rejects.toThrow(UnauthorizedException);
     });
   });
 
@@ -97,10 +140,26 @@ describe('TransactionsController', () => {
         expectedResult,
       );
 
-      const result = await controller.reverseTransaction(transactionId);
+      const result = await controller.reverseTransaction(
+        mockRequest,
+        transactionId,
+      );
 
       expect(service.reverseTransaction).toHaveBeenCalledWith(transactionId);
       expect(result).toEqual(expectedResult);
+    });
+
+    it('should throw UnauthorizedException when token is invalid', async () => {
+      await expect(
+        controller.reverseTransaction(
+          {
+            headers: {
+              authorization: 'Bearer invalid-token',
+            },
+          } as any,
+          'transaction123',
+        ),
+      ).rejects.toThrow(UnauthorizedException);
     });
   });
 });
