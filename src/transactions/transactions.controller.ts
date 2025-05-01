@@ -17,7 +17,7 @@ interface RequestWithUser extends Request {
   };
 }
 
-@ApiTags('transactions')
+@ApiTags('Transactions')
 @ApiBearerAuth()
 @UseGuards(AuthGuard)
 @Controller('transactions')
