@@ -27,7 +27,7 @@ pnpm install
 
 ## 🐳 Configuração do Docker
 
-O projeto utiliza Docker para rodar o banco de dados PostgreSQL. Para iniciar o container:
+O projeto utiliza Docker para rodar a api e o banco de dados PostgreSQL. Para iniciar o container:
 
 ```bash
 docker-compose up -d
@@ -46,14 +46,6 @@ Para parar o container:
 
 ```bash
 docker-compose down
-```
-
-## 🔧 Configuração do Banco de Dados
-
-Após iniciar o container Docker, execute as migrações do Prisma:
-
-```bash
-pnpm prisma migrate dev
 ```
 
 ## 🛠️ Funcionalidades

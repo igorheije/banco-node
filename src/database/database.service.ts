@@ -6,7 +6,7 @@ export class DatabaseService {
   constructor(private prisma: PrismaService) {}
 
   async query<T = any>(query: string, params: any[] = []): Promise<T[]> {
-    return this.prisma.$queryRawUnsafe<T[]>(query, ...params);
+    return this.prisma.$queryRawUnsafe<T[]>(query, ...params) as Promise<T[]>;
   }
 
   async execute(query: string, params: any[] = []): Promise<number> {
