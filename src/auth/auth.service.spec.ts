@@ -41,7 +41,7 @@ describe('AuthService', () => {
   });
 
   describe('validateUser', () => {
-    it('should return user when credentials are valid', async () => {
+    it('deve retornar o usuário quando as credenciais são válidas', async () => {
       const mockUser = {
         id: '1',
         email: 'test@example.com',
@@ -55,7 +55,7 @@ describe('AuthService', () => {
       expect(result).toEqual(mockUser);
     });
 
-    it('should return null when user is not found', async () => {
+    it('deve retornar null quando o usuário não é encontrado', async () => {
       (databaseService.query as jest.Mock).mockResolvedValue([]);
 
       await expect(
@@ -63,7 +63,7 @@ describe('AuthService', () => {
       ).rejects.toThrow(UnauthorizedException);
     });
 
-    it('should return null when password is invalid', async () => {
+    it('deve retornar null quando a senha é inválida', async () => {
       const mockUser = {
         id: '1',
         email: 'test@example.com',
@@ -80,7 +80,7 @@ describe('AuthService', () => {
   });
 
   describe('login', () => {
-    it('should return access token', async () => {
+    it('deve retornar o token de acesso', async () => {
       const mockUser = {
         id: '1',
         email: 'test@example.com',
@@ -98,7 +98,7 @@ describe('AuthService', () => {
   });
 
   describe('register', () => {
-    it('should create user and account', async () => {
+    it('deve criar o usuário e a conta', async () => {
       const mockUser = {
         id: 'mocked-uuid',
         name: 'Test User',

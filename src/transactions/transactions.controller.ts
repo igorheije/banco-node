@@ -5,6 +5,7 @@ import {
   Req,
   UseGuards,
   UnauthorizedException,
+  Param,
 } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
 import { Request } from 'express';
@@ -93,7 +94,10 @@ export class TransactionsController {
   @ApiResponse({ status: 200, description: 'Transação revertida com sucesso' })
   @ApiResponse({ status: 400, description: 'Transação inválida' })
   @ApiResponse({ status: 401, description: 'Não autorizado' })
-  async reverseTransaction(@Req() req: RequestWithUser, transactionId: string) {
+  async reverseTransaction(
+    @Req() req: RequestWithUser,
+    @Param('transactionId') transactionId: string,
+  ) {
     const userId = await this.authGuard.decodeToken(req.headers.authorization);
     if (!userId) {
       throw new UnauthorizedException('Não autorizado');

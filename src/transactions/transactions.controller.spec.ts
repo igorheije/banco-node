@@ -68,7 +68,7 @@ describe('TransactionsController', () => {
   });
 
   describe('deposit', () => {
-    it('should call transactionsService.deposit with correct parameters', async () => {
+    it('deve chamar transactionsService.deposit com os parâmetros corretos', async () => {
       const amount = 100.5;
       const expectedResult = { success: true, message: 'Deposit successful' };
 
@@ -80,7 +80,7 @@ describe('TransactionsController', () => {
       expect(result).toEqual(expectedResult);
     });
 
-    it('should throw UnauthorizedException when token is invalid', async () => {
+    it('deve lançar UnauthorizedException quando o token é inválido', async () => {
       await expect(
         controller.deposit(
           {
@@ -95,7 +95,7 @@ describe('TransactionsController', () => {
   });
 
   describe('transfer', () => {
-    it('should call transactionsService.transfer with correct parameters', async () => {
+    it('deve chamar transactionsService.transfer com os parâmetros corretos', async () => {
       const toAccountId = 'account123';
       const amount = 50.75;
       const expectedResult = { success: true, message: 'Transfer successful' };
@@ -116,7 +116,7 @@ describe('TransactionsController', () => {
       expect(result).toEqual(expectedResult);
     });
 
-    it('should throw UnauthorizedException when token is invalid', async () => {
+    it('deve lançar UnauthorizedException quando o token é inválido', async () => {
       await expect(
         controller.transfer(
           {
@@ -132,7 +132,7 @@ describe('TransactionsController', () => {
   });
 
   describe('reverseTransaction', () => {
-    it('should call transactionsService.reverseTransaction with correct parameters', async () => {
+    it('deve chamar transactionsService.reverseTransaction com os parâmetros corretos', async () => {
       const transactionId = 'transaction123';
       const expectedResult = { success: true, message: 'Transaction reversed' };
 
@@ -149,7 +149,7 @@ describe('TransactionsController', () => {
       expect(result).toEqual(expectedResult);
     });
 
-    it('should throw UnauthorizedException when token is invalid', async () => {
+    it('deve lançar UnauthorizedException quando o token é inválido', async () => {
       await expect(
         controller.reverseTransaction(
           {

@@ -34,7 +34,7 @@ describe('AuthController', () => {
   });
 
   describe('register', () => {
-    it('should call authService.register with correct parameters', async () => {
+    it('deve chamar authService.register com os parâmetros corretos', async () => {
       const name = 'John Doe';
       const email = 'john@example.com';
       const password = 'password123';
@@ -53,7 +53,7 @@ describe('AuthController', () => {
   });
 
   describe('login', () => {
-    it('should call authService.validateUser and login with correct parameters', async () => {
+    it('deve chamar authService.validateUser e login com parâmetros corretos', async () => {
       const email = 'john@example.com';
       const password = 'password123';
       const mockUser = { id: '1', email };
@@ -69,7 +69,7 @@ describe('AuthController', () => {
       expect(result).toEqual(expectedToken);
     });
 
-    it('should throw error when credentials are invalid', async () => {
+    it('deve lançar um erro quando as credenciais são inválidas', async () => {
       const email = 'john@example.com';
       const password = 'wrong-password';
 

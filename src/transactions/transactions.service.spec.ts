@@ -38,7 +38,7 @@ describe('TransactionsService', () => {
   });
 
   describe('deposit', () => {
-    it('should successfully deposit money', async () => {
+    it('deve depositar dinheiro com sucesso', async () => {
       const mockAccount = {
         id: 'account-1',
         user_id: 'user-1',
@@ -76,7 +76,7 @@ describe('TransactionsService', () => {
       });
     });
 
-    it('should throw BadRequestException when account not found', async () => {
+    it('deve lançar BadRequestException quando a conta não é encontrada', async () => {
       (databaseService.query as jest.Mock).mockResolvedValue([]);
 
       await expect(service.deposit('user-1', 50)).rejects.toThrow(
@@ -86,7 +86,7 @@ describe('TransactionsService', () => {
   });
 
   describe('transfer', () => {
-    it('should successfully transfer money', async () => {
+    it('deve transferir dinheiro com sucesso', async () => {
       const mockFromAccount = {
         id: 'account-1',
         user_id: 'user-1',
@@ -132,7 +132,7 @@ describe('TransactionsService', () => {
       });
     });
 
-    it('should throw BadRequestException when account not found', async () => {
+    it('deve lançar BadRequestException quando a conta não é encontrada', async () => {
       (databaseService.query as jest.Mock).mockResolvedValue([]);
 
       await expect(service.transfer('user-1', 'account-2', 30)).rejects.toThrow(
@@ -140,7 +140,7 @@ describe('TransactionsService', () => {
       );
     });
 
-    it('should throw BadRequestException when insufficient balance', async () => {
+    it('deve lançar BadRequestException quando o saldo é insuficiente', async () => {
       const mockFromAccount = {
         id: 'account-1',
         user_id: 'user-1',
@@ -163,7 +163,7 @@ describe('TransactionsService', () => {
   });
 
   describe('reverseTransaction', () => {
-    it('should successfully reverse a transaction', async () => {
+    it('deve reverter uma transação com sucesso', async () => {
       const mockTransaction = {
         id: 'transaction-1',
         from_account_id: 'account-1',
@@ -221,7 +221,7 @@ describe('TransactionsService', () => {
       });
     });
 
-    it('should throw BadRequestException when transaction not found', async () => {
+    it('deve lançar BadRequestException quando a transação não é encontrada', async () => {
       (databaseService.query as jest.Mock).mockResolvedValue([]);
 
       await expect(service.reverseTransaction('transaction-1')).rejects.toThrow(
@@ -229,7 +229,7 @@ describe('TransactionsService', () => {
       );
     });
 
-    it('should throw BadRequestException when transaction already reversed', async () => {
+    it('deve lançar BadRequestException quando a transação já foi revertida', async () => {
       const mockTransaction = {
         id: 'transaction-1',
         from_account_id: 'account-1',
