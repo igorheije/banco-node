@@ -41,6 +41,7 @@ Este comando irá:
   - Senha: senha
   - Banco de dados: meubanco
   - Porta: 5432
+- Subir a aplicação na porta 3000
 
 Para parar o container:
 
